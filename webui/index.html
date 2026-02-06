@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Offline Browser Profile</title>
+  <link rel="stylesheet" href="./styles.min.css" />
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+</head>
+
+<body>
+  <div class="frame">
+    <header class="top">
+      <div class="top-left" id="topProfilesLeft">
+        <div class="search-wrap" id="searchWrap">
+          <button class="btn add search-btn" id="btnSearch" aria-label="Search">
+            <svg class="ico-search" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5">
+              </circle>
+              <line x1="16.2" y1="16.2" x2="21" y2="21">
+              </line>
+            </svg>
+          </button>
+          <div class="search-box hidden" id="searchBox" aria-hidden="true">
+            <input id="searchInput" class="search-input" type="text" placeholder="Search..." spellcheck="false" />
+            <button class="search-clear" id="btnSearchClear" aria-label="Clear">
+              <svg class="ico-x" viewBox="0 0 24 24" aria-hidden="true">
+                <line x1="7" y1="7" x2="17" y2="17">
+                </line>
+                <line x1="17" y1="7" x2="7" y2="17">
+                </line>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <button class="btn uplist" id="btnRefresh">Update the list</button>
+        <button class="btn btn-del-all hidden" id="btnDeleteAll">Delete All</button>
+      </div>
+      <div class="top-left hidden" id="topSettingsLeft">
+        <button class="btn back" id="btnBack" aria-label="Back">
+          <svg class="ico-back" viewBox="0 0 24 24" aria-hidden="true">
+            <polyline points="15 6 9 12 15 18">
+            </polyline>
+          </svg>
+          <span>Back</span>
+        </button>
+      </div>
+      <div class="top-right">
+        <button class="btn add" id="btnAdd" aria-label="Add profile">
+          <svg class="ico-plus" viewBox="0 0 24 24" aria-hidden="true">
+            <line x1="12" y1="6" x2="12" y2="18">
+            </line>
+            <line x1="6" y1="12" x2="18" y2="12">
+            </line>
+          </svg>
+          <span>Add profile</span>
+        </button>
+        <button class="btn add" id="btnMenu" aria-label="Menu">
+          <svg class="ico-menu" viewBox="0 0 24 24" aria-hidden="true">
+            <line x1="6" y1="7" x2="18" y2="7">
+            </line>
+            <line x1="6" y1="12" x2="18" y2="12">
+            </line>
+            <line x1="6" y1="17" x2="18" y2="17">
+            </line>
+          </svg>
+        </button>
+      </div>
+    </header>
+    <main class="main" id="profilesView">
+      <div class="table-wrap">
+        <div class="loading hidden" id="loading" aria-hidden="true">
+          <div class="spinner" aria-label="Loading">
+          </div>
+        </div>
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th class="col-check">
+                <label class="chk-wrap" title="Select all">
+                  <input id="chkAll" class="chk" type="checkbox" aria-label="Select all profiles">
+                </label>
+              </th>
+              <th class="col-name">Name</th>
+              <th class="col-state">State</th>
+              <th class="col-notes">Notes</th>
+              <th class="col-proxy">Proxy</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+          </tbody>
+        </table>
+      </div>
+    </main>
+    <main class="main hidden" id="settingsView">
+      <div class="settings-shell">
+        <aside class="settings-side">
+          <div class="side-group">
+            <div class="side-h">Menu</div>
+            <button class="side-item active" id="navSettings" type="button">Settings</button>
+            <button class="side-item" id="navAbout" type="button">About</button>
+          </div>
+        </aside>
+        <section class="settings-main">
+          <div id="pageSettings">
+            <div class="settings-head">
+              <div class="settings-title">Settings</div>
+              <div class="settings-sub">Choose Chromium and profiles folder</div>
+            </div>
+            <div class="settings-card">
+              <div class="form-row">
+                <div class="lbl">Chromium / chrome.exe</div>
+                <div class="field">
+                  <input id="inpChromePath" class="txt" type="text" spellcheck="false" />
+                  <button class="btn outline-select" id="btnBrowseChrome" type="button">Select file</button>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="lbl">Profiles folder</div>
+                <div class="field">
+                  <input id="inpProfilesDir" class="txt" type="text" spellcheck="false" />
+                  <button class="btn outline-select" id="btnBrowseProfiles" type="button">Select folder</button>
+                </div>
+              </div>
+            </div>
+            <div class="settings-footer">
+              <button class="btn apply outline" id="btnResetSettings" type="button">Reset</button>
+              <button class="btn apply" id="btnSaveSettings" type="button">Save</button>
+            </div>
+          </div>
+          <div id="pageAbout" class="hidden">
+            <div class="settings-head">
+              <div class="settings-title">About</div>
+              <div class="settings-sub">Application information</div>
+            </div>
+            <div class="about-card">
+              <div class="about-top2">
+                <img class="about-logo" src="../icon.png" alt="App logo" onerror="this.onerror=null; this.src='../icon.ico';" />
+                <div class="about-top2-text">
+                  <div class="about-app2">Offline Browser Profile</div>
+                  <div class="about-verline">
+                    <span class="about-ver2">v1.0</span>
+                    <a class="about-lic" href="#" id="licLink">LICENSE</a>
+                  </div>
+                </div>
+              </div>
+              <div class="about-grid">
+                <div class="k">Created by</div>
+                <div class="v">Sống Màu Cỏ Dại</div>
+                <div class="k">Email</div>
+                <a class="v link" href="https://mail.google.com/mail/?view=cm&fs=1&to=songmaucodai@gmail.com">songmaucodai@gmail.com</a>
+                <div class="k">Website</div>
+                <a class="v link" href="https://songmaucodai.github.io" target="_blank" rel="noopener">songmaucodai.***</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+    <main class="main hidden" id="editView">
+      <div class="edit-shell">
+        <div class="edit-head">
+          <div class="edit-title">Edit Profile</div>
+        </div>
+        <div class="edit-content">
+          <div class="edit-tabs" role="tablist" aria-label="Edit tabs">
+            <button class="ep-tab active" type="button" data-tab="general">General</button>
+            <button class="ep-tab" type="button" data-tab="proxy">Proxy</button>
+            <button class="ep-tab" type="button" data-tab="webrtc">WebRTC</button>
+          </div>
+          <div class="ep-card">
+            <div class="edit-body">
+              <section class="ep-page" id="epPageGeneral" data-page="general">
+                <div class="ep-field">
+                  <div class="ep-label">Profile Name</div>
+                  <input id="epName" class="ep-input" type="text" spellcheck="false" />
+                </div>
+                <div class="ep-field hidden" id="epFieldQty">
+                  <div class="ep-label">Quantity</div>
+                  <div class="csel" id="epQtySel" data-csel="qty">
+                    <button class="csel-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+                      <span class="csel-value" id="epQtyLabel">1</span>
+                      <svg class="csel-caret" viewBox="0 0 24 24" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9">
+                        </polyline>
+                      </svg>
+                    </button>
+                    <div class="csel-menu" role="listbox">
+                      <div class="csel-item active" data-value="1">1</div>
+                      <div class="csel-item" data-value="5">5</div>
+                      <div class="csel-item" data-value="10">10</div>
+                      <div class="csel-item" data-value="20">20</div>
+                      <div class="csel-item" data-value="50">50</div>
+                      <div class="csel-item" data-value="100">100</div>
+                      <div class="csel-item" data-value="200">200</div>
+                      <div class="csel-item" data-value="500">500</div>
+                    </div>
+                    <input type="hidden" id="epQty" value="1" />
+                  </div>
+                </div>
+                <div class="ep-field">
+                  <div class="ep-label">Operating System</div>
+                  <div class="csel" id="epOsSel" data-csel="os">
+                    <button class="csel-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+                      <span class="csel-value" id="epOsLabel">Windows</span>
+                      <svg class="csel-caret" viewBox="0 0 24 24" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9">
+                        </polyline>
+                      </svg>
+                    </button>
+                    <div class="csel-menu" role="listbox">
+                      <div class="csel-item" data-value="windows">Windows</div>
+                      <div class="csel-item" data-value="macos">macOS</div>
+                      <div class="csel-item" data-value="linux">Linux</div>
+                    </div>
+                    <input type="hidden" id="epOs" value="windows" />
+                  </div>
+                </div>
+                <div class="ep-field">
+                  <div class="ep-label">Notes</div>
+                  <textarea id="epNotes" class="ep-textarea" placeholder="Optional notes..." spellcheck="false">
+                  </textarea>
+                </div>
+              </section>
+              <section class="ep-page hidden" id="epPageProxy" data-page="proxy">
+                <div class="ep-proxy-top">
+                  <label class="ep-chk">
+                    <input id="epProxyEnabled" class="chk" type="checkbox" />
+                    <span>Enable proxy</span>
+                  </label>
+                  <div class="ep-proxy-actions">
+                    <button class="btn ep-mini" id="epProxyClean" type="button">Clean</button>
+                  </div>
+                </div>
+                <div class="ep-proxy-merge">
+                  <div class="ep-merge-block">
+                    <div class="ep-merge-labels ep-merge-3">
+                      <div class="ep-mlab">Type</div>
+                      <div class="ep-mlab">Host</div>
+                      <div class="ep-mlab">Port</div>
+                    </div>
+                    <div class="ep-merge-row">
+                      <div class="ep-seg ep-seg-merge">
+                        <div class="ep-seg-cell seg-type">
+                          <div class="csel" id="epProxyTypeSel" data-csel="proxyType">
+                            <button class="csel-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+                              <span class="csel-value" id="epProxyTypeLabel">http</span>
+                              <svg class="csel-caret" viewBox="0 0 24 24" aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9">
+                                </polyline>
+                              </svg>
+                            </button>
+                            <div class="csel-menu" role="listbox">
+                              <div class="csel-item" data-value="http">http</div>
+                              <div class="csel-item" data-value="socks4">socks4</div>
+                              <div class="csel-item" data-value="socks5">socks5</div>
+                            </div>
+                            <input type="hidden" id="epProxyType" value="http" />
+                          </div>
+                        </div>
+                        <div class="ep-vline" aria-hidden="true">
+                        </div>
+                        <input id="epProxyHost" class="ep-seg-inp seg-host" type="text" spellcheck="false" placeholder="1.2.3.4" />
+                        <div class="ep-vline" aria-hidden="true">
+                        </div>
+                        <input id="epProxyPort" class="ep-seg-inp seg-port" type="text" spellcheck="false" placeholder="8080" />
+                      </div>
+                      <div class="ep-proxy-tools-out" aria-label="Proxy tools">
+                        <button class="ep-proxy-ico" id="epProxyCopy" type="button" aria-label="Copy proxy">
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M7.5 6 H4.5 V22 H14.5 a2 2 0 0 0 2 -2 V 19">
+                            </path>
+                            <path d="M15.5 2 H7.5 V19 H17.5 a2 2 0 0 0 2-2 V6 z">
+                            </path>
+                            <path d="M 15.5 2 V 5 Q 15.5 6 17.5 6 H 19.5">
+                            </path>
+                            <line x1="16.5" y1="10" x2="10.5" y2="10">
+                            </line>
+                            <line x1="16.5" y1="14" x2="10.5" y2="14">
+                            </line>
+                          </svg>
+                        </button>
+                        <button class="ep-proxy-ico" id="epProxyPaste" type="button" aria-label="Paste proxy">
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="7" y="1" width="7.5" height="4" rx="1" ry="1">
+                            </rect>
+                            <path d="M15 3h1a2 2 0 0 1 2 2v4.4">
+                            </path>
+                            <path d="M6.5 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5.4">
+                            </path>
+                            <rect x="11" y="10" width="10" height="13" rx="1.5">
+                            </rect>
+                            <path d="M14 13.5h4">
+                            </path>
+                            <path d="M14 16.5h4">
+                            </path>
+                            <path d="M14 19.5h4">
+                            </path>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ep-merge-block">
+                    <div class="ep-merge-labels ep-merge-2">
+                      <div class="ep-mlab">Username</div>
+                      <div class="ep-mlab">Password</div>
+                    </div>
+                    <div class="ep-merge-row ep-merge-row--passfull">
+                      <div class="ep-seg ep-seg-merge">
+                        <input id="epProxyUser" class="ep-seg-inp seg-user" type="text" spellcheck="false" placeholder="optional" />
+                        <div class="ep-vline" aria-hidden="true">
+                        </div>
+                        <input id="epProxyPass" class="ep-seg-inp seg-pass" type="password" spellcheck="false" placeholder="optional" />
+                      </div>
+                      <div class="ep-proxy-tools-out ep-proxy-tools-out--spacer" aria-hidden="true">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ep-proxy-statuswrap">
+                    <div class="ep-proxy-statusline">
+                      <span class="ep-proxy-statusk">Status:</span>
+                      <span id="epProxyStatus" class="ep-proxy-statusv">Not checked yet</span>
+                    </div>
+                    <div class="ep-proxy-checkrow">
+                      <button class="btn outline-select ep-proxy-checkbtn" id="epProxyCheck" type="button">Check proxy</button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section class="ep-page hidden" id="epPageWebrtc" data-page="webrtc">
+                <div class="ep-field">
+                  <div class="ep-label">WebRTC Mode</div>
+                  <div class="csel" id="epWebrtcSel" data-csel="webrtc">
+                    <button class="csel-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+                      <span class="csel-value" id="epWebrtcLabel">Altered (Recommended)</span>
+                      <svg class="csel-caret" viewBox="0 0 24 24" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9">
+                        </polyline>
+                      </svg>
+                    </button>
+                    <div class="csel-menu" role="listbox">
+                      <div class="csel-item" data-value="altered">Altered (Recommended)</div>
+                      <div class="csel-item" data-value="disabled">Disabled</div>
+                    </div>
+                    <input type="hidden" id="epWebrtcMode" value="altered" />
+                  </div>
+                </div>
+                <div class="ep-note">Altered: Allows WebRTC but modifies exposed IP and network information.
+                  <br/>Disabled: Blocks the WebRTC API (may break video calls).
+                  <br/>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+        <div class="edit-footer">
+          <button class="btn ep-cancel" id="epCancel" type="button">Cancel</button>
+          <button class="btn ep-save" id="epSave" type="button">Save Profile</button>
+        </div>
+      </div>
+    </main>
+    <div class="dlg-overlay" id="dlgOverlay" aria-hidden="true">
+      <div class="dlg" role="dialog" aria-modal="true">
+        <div class="dlg-head">
+          <div class="dlg-title" id="dlgTitle">Delete profile</div>
+          <button class="dlg-x" id="dlgClose" aria-label="Close">
+            <svg class="ico-x" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="7" y1="7" x2="17" y2="17">
+              </line>
+              <line x1="17" y1="7" x2="7" y2="17">
+              </line>
+            </svg>
+          </button>
+        </div>
+        <div class="dlg-foot">
+          <button class="dlg-btn cancel" id="dlgCancel">Cancel</button>
+          <button class="dlg-btn danger" id="dlgOk">Delete</button>
+        </div>
+      </div>
+    </div>
+    <div class="dlg-overlay" id="exitOverlay" aria-hidden="true">
+      <div class="dlg" role="dialog" aria-modal="true">
+        <div class="dlg-head">
+          <div class="dlg-title">Closing the app will stop all running.
+            <br>Are you sure?</div>
+          <button class="dlg-x" id="exitCloseX" aria-label="Close">
+            <svg class="ico-x" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="7" y1="7" x2="17" y2="17">
+              </line>
+              <line x1="17" y1="7" x2="7" y2="17">
+              </line>
+            </svg>
+          </button>
+        </div>
+        <div class="dlg-foot">
+          <button class="dlg-btn cancel" id="btnExitYes">Yes</button>
+          <button class="dlg-btn cancel" id="btnExitNo">No</button>
+        </div>
+      </div>
+    </div>
+    <!-- License popup -->
+    <div class="dlg-overlay" id="licOverlay" aria-hidden="true">
+      <div class="dlg lic-dlg" role="dialog" aria-modal="true" aria-label="License">
+        <div class="dlg-head">
+          <div class="dlg-title">License</div>
+          <button class="dlg-x" id="licCloseX" aria-label="Close">
+            <svg class="ico-x" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="7" y1="7" x2="17" y2="17">
+              </line>
+              <line x1="17" y1="7" x2="7" y2="17">
+              </line>
+            </svg>
+          </button>
+        </div>
+        <div class="lic-body"> <pre class="lic-pre">Offline Browser Profile
+    Copyright (c) 2025 - 2026 Songmaucodai
+    
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software, to use the software for personal or non-commercial purposes.
+    
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY.
+    
+    You are NOT allowed to:
+    1. Sell, rent, or lease this software.
+    2. Reverse engineer, decompile, or disassemble the software.</pre>
+        </div>
+        <div class="dlg-foot lic-foot">
+          <button class="dlg-btn cancel" id="licClose" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+    <div class="toast" id="toast">
+    </div>
+  </div>
+  <script src="./app.js"></script>
+</body>
+
+</html>
